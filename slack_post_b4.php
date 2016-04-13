@@ -1,6 +1,6 @@
 <?php
-require __DIR__ . '/slack_post.config.php';
-require __DIR__ . '/google-api-php-client/src/Google/autoload.php';
+require_once(__DIR__ . '/slack_post.config.php');
+require_once(__DIR__ . '/google-api-php-client/src/Google/autoload.php');
 
 define('APPLICATION_NAME', 'Google Calendar API PHP Quickstart');
 define('CREDENTIALS_PATH', '~/.credentials/calendar-php-quickstart.json');
