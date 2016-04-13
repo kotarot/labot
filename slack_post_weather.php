@@ -1,5 +1,6 @@
 <?php
-require __DIR__ . '/slack_post.config.php';
+require_once(__DIR__ . '/slack_post.config.php');
+include_once(__DIR__ . '/openweathermap.php');
 
 if (php_sapi_name() != 'cli') {
   throw new Exception('This application must be run on the command line.');
@@ -33,46 +34,6 @@ $postdata = array(
 );
 
 
-// -------------------------------- //
-// OpenWeatherMap
-
-// Code のリスト: http://openweathermap.org/weather-conditions
-function get_weather_icon($code) {
-    // Group 2xx: Thunderstorm
-    if (200 <= $code && $code < 300) {
-        return ':zap:';
-    }
-    // Group 3xx: Drizzle
-    if (300 <= $code && $code < 400) {
-        return ':umbrella:';
-    }
-    // Group 5xx: Rain
-    if (500 <= $code && $code < 600) {
-        return ':umbrella:';
-    }
-    // Group 6xx: Snow
-    if (600 <= $code && $code < 700) {
-        return ':snowman:';
-    }
-    // Group 7xx: Atmosphere
-    if (700 <= $code && $code < 800) {
-        return ':foggy:';
-    }
-    // Group 800: Clear
-    if ($code === 800) {
-        return ':sunny:';
-    }
-    // Group 80x: Clouds
-    if (801 <= $code && $code < 900) {
-        return ':cloud:';
-    }
-    // Group 90x: Extreme / Group 9xx: Additional
-    if (900 <= $code && $code < 1000) {
-        return ':cyclone:';
-    }
-    return ':question:';
-}
-
 $url = 'http://api.openweathermap.org/data/2.5/forecast?q=' . OWM_CITY . '&units=metric&appid=' . OWM_API_KEY;
 $response = file_get_contents($url);
 $responsedata = json_decode($response, true);
@@ -82,13 +43,16 @@ if ($responsedata['cod'] === '200') {
     foreach ($responsedata['list'] as $slot) {
         if ($slot['dt_txt'] === $todaystr . ' 09:00:00') {
             $postdata['weather'][0]['main'] = $slot['weather'][0]['main'];
-            $postdata['weather'][0]['icon'] = get_weather_icon($slot['weather'][0]['id']);
+            $info = get_weather_info($slot['weather'][0]['id']);
+            $postdata['weather'][0]['icon'] = $info['icon'];
         } else if ($slot['dt_txt'] === $todaystr . ' 15:00:00') {
             $postdata['weather'][1]['main'] = $slot['weather'][0]['main'];
-            $postdata['weather'][1]['icon'] = get_weather_icon($slot['weather'][0]['id']);
+            $info = get_weather_info($slot['weather'][0]['id']);
+            $postdata['weather'][1]['icon'] = $info['icon'];
         } else if ($slot['dt_txt'] === $todaystr . ' 21:00:00') {
             $postdata['weather'][2]['main'] = $slot['weather'][0]['main'];
-            $postdata['weather'][2]['icon'] = get_weather_icon($slot['weather'][0]['id']);
+            $info = get_weather_info($slot['weather'][0]['id']);
+            $postdata['weather'][2]['icon'] = $info['icon'];
         }
 
         // 最高気温/最低気温
