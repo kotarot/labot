@@ -1,0 +1,18 @@
+<?php
+// Hackey の LED を (1秒間) 点灯させる URL リスト
+$hackey_led_1sec_urls = array(
+    'red' =>    'http://hackey-app.cerevo.com/api/v1/blink/xxxxxxxxxxxxxxxx',
+    'green' =>  'http://hackey-app.cerevo.com/api/v1/blink/xxxxxxxxxxxxxxxx',
+    'blue' =>   'http://hackey-app.cerevo.com/api/v1/blink/xxxxxxxxxxxxxxxx',
+    'yellow' => 'http://hackey-app.cerevo.com/api/v1/blink/xxxxxxxxxxxxxxxx',
+    'purple' => 'http://hackey-app.cerevo.com/api/v1/blink/xxxxxxxxxxxxxxxx'
+);
+
+// Hackey の LED を (4秒間) 点灯させる URL リスト
+$hackey_led_4sec_urls = array(
+    'red' =>    'http://hackey-app.cerevo.com/api/v1/blink/xxxxxxxxxxxxxxxx',
+    'green' =>  'http://hackey-app.cerevo.com/api/v1/blink/xxxxxxxxxxxxxxxx',
+    'blue' =>   'http://hackey-app.cerevo.com/api/v1/blink/xxxxxxxxxxxxxxxx',
+    'yellow' => 'http://hackey-app.cerevo.com/api/v1/blink/xxxxxxxxxxxxxxxx',
+    'purple' => 'http://hackey-app.cerevo.com/api/v1/blink/xxxxxxxxxxxxxxxx'
+);
