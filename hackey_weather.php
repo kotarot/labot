@@ -72,20 +72,20 @@ print '$led_color_temp: ' . $led_color_temp . "\n";
 // 天気に応じて 10分間 (= 600秒) LEDをちかちかさせる
 // ちなみにAPI遅延を加味して1イテレーションだいたい8秒ぐらい
 for ($i = 0; ; $i++) {
-    print "ready weather_$i\n";
+    //print "ready weather_$i\n";
     file_get_contents($hackey_led_4sec_urls[$led_color_weather]);
-    print "done weather_$i\n";
+    //print "done weather_$i\n";
     sleep(4);
 
-    print "ready temp_$i\n";
+    //print "ready temp_$i\n";
     file_get_contents($hackey_led_1sec_urls[$led_color_temp]);
-    print "done temp_$i\n";
+    //print "done temp_$i\n";
     sleep(2);
 
     // 経過秒数
     $time_elapsed = time() - $time_start;
-    print "$time_elapsed\n";
-    if (60 - 8 <= $time_elapsed) {
+    //print "$time_elapsed\n";
+    if (600 - 8 <= $time_elapsed) {
         exit();
     }
 }
