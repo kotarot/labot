@@ -2,5 +2,7 @@ google-api-php-client/
 google-calendar-api-quickstart/
 
 client_secret.json
+googleapi.config.php
 slack_post.config.php
 hackey.config.php
+linebot.config.php

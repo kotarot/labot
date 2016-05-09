@@ -1,0 +1,8 @@
+<?php
+/**
+ * Fill API keys and rename this file to `googleapi.config.php`
+ */
+
+// Google Calendar 用
+define('CALENDAR_ID',      'primary');
+define('CALENDAR_ID_BOSS', 'XXXXXXXX@example.com');

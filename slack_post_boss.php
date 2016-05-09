@@ -1,5 +1,6 @@
 <?php
 require_once(__DIR__ . '/slack_post.config.php');
+require_once(__DIR__ . '/googleapi.config.php');
 require_once(__DIR__ . '/google-api-php-client/src/Google/autoload.php');
 
 define('APPLICATION_NAME', 'Google Calendar API PHP Quickstart');
