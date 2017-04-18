@@ -69,7 +69,8 @@ if ($responsedata['cod'] === '200') {
 // -------------------------------- //
 // Mastodon 投稿処理
 
-$text = '[' . $todaystr .'] 今日の天気: '
+//$text = '[' . $todaystr .'] 今日の天気だよ: '
+$text = 'おはよう! 今日の天気だよ: '
       . '午前 ' . $postdata['weather'][0]['main'] . ' ' . $postdata['weather'][0]['icon'] . ' → '
       . '午後 ' . $postdata['weather'][1]['main'] . ' ' . $postdata['weather'][1]['icon'] . ' → '
       . '夜 '   . $postdata['weather'][2]['main'] . ' ' . $postdata['weather'][2]['icon'] . ' '
