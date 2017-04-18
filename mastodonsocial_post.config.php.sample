@@ -1,0 +1,10 @@
+<?php
+/**
+ * Fill API keys and rename this file to `mastodonsocial_post.config.php`
+ */
+
+// Mastodon 用
+// mstdn.jp
+define('MASTODONSOCIAL_MSTDNJP_ACCESS_TOKEN', 'XXXXXXXX');
+// pawoo.net
+define('MASTODONSOCIAL_PAWOO_ACCESS_TOKEN', 'XXXXXXXX');
