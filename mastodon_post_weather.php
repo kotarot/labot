@@ -67,7 +67,7 @@ if ($responsedata['cod'] === '200') {
 
 
 // -------------------------------- //
-// Slack投稿処理
+// Mastodon 投稿処理
 
 $text = '[' . $todaystr .'] 今日の天気: '
       . '午前 ' . $postdata['weather'][0]['main'] . ' ' . $postdata['weather'][0]['icon'] . ' → '
