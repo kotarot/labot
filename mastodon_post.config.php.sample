@@ -1,0 +1,7 @@
+<?php
+/**
+ * Fill API keys and rename this file to `mastodon_post.config.php`
+ */
+
+// Mastodon 用
+define('MASTODON_ACCESS_TOKEN', 'XXXXXXXX');
