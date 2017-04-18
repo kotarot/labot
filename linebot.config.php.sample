@@ -1,0 +1,8 @@
+<?php
+/**
+ * Fill API keys and rename this file to `linebot.config.php`
+ */
+
+define('LINEBOT_CHANNEL_ID', 'XXXXXXXX');
+define('LINEBOT_CHANNEL_SECRET', 'XXXXXXXX');
+define('LINEBOT_MID', 'XXXXXXXX');
