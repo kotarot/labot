@@ -20,7 +20,7 @@ $text_candidates = array(
     'beer' =>
         '定時になったよ! 仕事やめてビールを飲もう :beer: :beers: :beer: :beers: :beer: :beers: :beer: :beers: :beer: :beers: :beer: :beers: :beer: :beers: :beer: :beers:',
     'gotobed' =>
-        '0時になったよ! おやすみ :zzz: :zzz: :zzz: :zzz: :zzz: :zzz: :zzz: :zzz:',
+        '0時になったよ! エロ画像見てないでおやすみ :zzz: :zzz: :zzz: :zzz: :zzz: :zzz: :zzz: :zzz:',
     'chinchin' =>
         'おちんちんびろーん'
 );
