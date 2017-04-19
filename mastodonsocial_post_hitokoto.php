@@ -12,7 +12,7 @@ $text_candidates = array(
     'coffee' =>
         '10時になったよ! 仕事やめて休憩しよう :coffee: :coffee: :coffee: :coffee:',
     'lunch' =>
-        '12時になったよ! 仕事やめてご飯食べに行こう :fries: :pizza: :hotdog: :taco: :burrito: :stuffed_flatbread: :curry: :ramen: :spaghetti: :sushi: :fried_shrimp:',
+        '12時になったよ! 仕事やめてご飯を食べよう :fries: :pizza: :hotdog: :taco: :burrito: :stuffed_flatbread: :curry: :ramen: :spaghetti: :sushi: :fried_shrimp:',
     'nap' =>
         '2時になったよ! 仕事やめて昼寝をしよう :sleeping_accommodation: :sleeping_accommodation: :sleeping_accommodation: :sleeping_accommodation:',
     'oyatsu' =>
@@ -20,7 +20,7 @@ $text_candidates = array(
     'beer' =>
         '定時になったよ! 仕事やめてビールを飲もう :beer: :beers: :beer: :beers: :beer: :beers: :beer: :beers: :beer: :beers: :beer: :beers: :beer: :beers: :beer: :beers:',
     'gotobed' =>
-        '0時になったよ! オナニーしてないで寝よう :zzz: :zzz: :zzz: :zzz: :zzz: :zzz: :zzz: :zzz:',
+        '0時になったよ! おやすみ :zzz: :zzz: :zzz: :zzz: :zzz: :zzz: :zzz: :zzz:',
     'chinchin' =>
         'おちんちんびろーん'
 );
