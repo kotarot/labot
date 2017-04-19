@@ -12,7 +12,7 @@ $text_candidates = array(
     'coffee' =>
         '10時になったよ! 研究を中断して休憩しよう :coffee: :coffee: :coffee: :coffee:',
     'lunch' =>
-        '12時になったよ! 研究を中断してご飯食べに行こう :fries: :pizza: :hotdog: :taco: :burrito: :stuffed_flatbread: :curry: :ramen: :spaghetti: :sushi: :fried_shrimp:',
+        '12時になったよ! 研究を中断してご飯を食べよう :fries: :pizza: :hotdog: :taco: :burrito: :stuffed_flatbread: :curry: :ramen: :spaghetti: :sushi: :fried_shrimp:',
     'nap' =>
         '2時になったよ! 研究を中断して昼寝をしよう :sleeping_accommodation: :sleeping_accommodation: :sleeping_accommodation: :sleeping_accommodation:',
     'oyatsu' =>
@@ -20,7 +20,7 @@ $text_candidates = array(
     'beer' =>
         '定時になったよ! 研究を中断してビールを飲もう :beer: :beers: :beer: :beers: :beer: :beers: :beer: :beers: :beer: :beers: :beer: :beers: :beer: :beers: :beer: :beers:',
     'gotobed' =>
-        '0時になったよ! 研究を中断して寝ようね :zzz: :zzz: :zzz: :zzz: :zzz: :zzz: :zzz: :zzz:'
+        '0時になったよ! 研究を中断しておやすみ :zzz: :zzz: :zzz: :zzz: :zzz: :zzz: :zzz: :zzz:'
 );
 
 $text = '';
