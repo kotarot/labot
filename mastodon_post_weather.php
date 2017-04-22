@@ -1,6 +1,6 @@
 <?php
 require_once(__DIR__ . '/slack_post.config.php');
-require_once(__DIR__ . '/mastodon_post.config.php');
+require_once(__DIR__ . '/mastodon.config.php');
 include_once(__DIR__ . '/openweathermap.php');
 
 if (php_sapi_name() != 'cli') {
