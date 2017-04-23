@@ -1,13 +1,15 @@
+# Google API
 google-api-php-client/
 google-calendar-api-quickstart/
+googleapi.config.php
 
 client_secret.json
-googleapi.config.php
 slack_post.config.php
-mastodon_post.config.php
-mastodonsocial_post.config.php
 hackey.config.php
 linebot.config.php
 
+# Mastodon
+mastodon.config.php
+mastodonsocial_post.config.php
 last_yamanote.txt
 last_fukutoshin.txt

@@ -1,6 +1,6 @@
 <?php
 /**
- * Fill API keys and rename this file to `mastodon_post.config.php`
+ * Fill API keys and rename this file to `mastodon.config.php`
  */
 
 // Mastodon 用
