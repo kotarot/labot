@@ -95,7 +95,9 @@ if (count($results->getItems()) == 0) {
         //$timestamp = strtotime($datestr);
         //print date('Y/m/d H:i:s', $timestamp);
         if ($datestr === $todaystr) {
-            $nicchoku = str_replace('日直　', '', $event->getSummary());
+            $nicchoku = $event->getSummary();
+            $nicchoku = str_replace('日直 ', '', $nicchoku);
+            $nicchoku = str_replace('日直　', '', $nicchoku);
         }
         printf("%s (%s)\n", $event->getSummary(), $datestr);
     }
