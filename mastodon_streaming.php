@@ -67,7 +67,16 @@ function proc($update) {
     $hungrys = array('空いた', 'すいた', '減った', 'へった');
     foreach ($hungrys as $hungry) {
         if (strpos($content_lower, $hungry)) {
-            $ret['status'] = '@' . $username . ' つ :ramen:';
+            $ret['status'] = '@' . $username . ' つ :ramen: :sushi:';
+            return $ret;
+        }
+    }
+
+    // おやつ系
+    $okashis = array('お菓子', 'おかし', 'おやつ', 'デザート', 'アイス');
+    foreach ($okashis as $okashi) {
+        if (strpos($content_lower, $okashi)) {
+            $ret['status'] = '@' . $username . ' つ :icecream: :shaved_ice: :ice_cream:';
             return $ret;
         }
     }
@@ -77,6 +86,21 @@ function proc($update) {
     foreach ($whattimes as $whattime) {
         if (strpos($content_lower, $whattime)) {
             $ret['status'] = '@' . $username . ' ' . date(DATE_ATOM);
+            return $ret;
+        }
+    }
+
+    // 平成何年
+    $heiseis = array('平成何年');
+    foreach ($heiseis as $heisei) {
+        if (strpos($content_lower, $heisei)) {
+            $hyear = -1;
+            if (preg_match('/[0-9]+/', $content_lower, $matches)) {
+                $hyear = (int)$matches[0] - 1988;
+            } else {
+                $hyear = (int)date('Y') - 1988;
+            }
+            $ret['status'] = '@' . $username . ' 平成' . $hyear . '年';
             return $ret;
         }
     }
