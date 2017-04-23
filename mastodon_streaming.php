@@ -1,5 +1,6 @@
 <?php
 require_once(__DIR__ . '/mastodon.config.php');
+require_once(__DIR__ . '/mastodon_googleapi.php');
 
 if (php_sapi_name() != 'cli') {
   throw new Exception('This application must be run on the command line.');
@@ -101,6 +102,30 @@ function proc($update) {
                 $hyear = (int)date('Y') - 1988;
             }
             $ret['status'] = '@' . $username . ' 平成' . $hyear . '年';
+            return $ret;
+        }
+    }
+
+    // 定期ゼミ
+    global $upcoming_teizemi, $is_teizemi_today, $is_teizemi_tomorrow;
+    //var_dump($upcoming_teizemi);
+    $teizemis = array('定期ゼミ', '定ゼミ', 'ゼミ');
+    foreach ($teizemis as $teizemi) {
+        if (strpos($content_lower, $teizemi) && strpos($content_lower, 'いつ')) {
+            $ret['status'] = '@' . $username . ' 次の定ゼミは ' . $upcoming_teizemi[0]['date'] . ' だよ';
+            $ret['visibility'] = 'private';
+            return $ret;
+        }
+    }
+
+    // 昼飯
+    $lunches = array('昼ごはん', '昼ご飯', '昼飯', 'ランチ');
+    $restaurants = array(
+        '学食', 'ひまわり', 'ヒマラヤ', 'ダイラバ', 'こがね製麺',
+        '麺爺', '助鮨', 'ビッグボーイ', 'マクドナルド');
+    foreach ($lunches as $lunch) {
+        if (strpos($content_lower, $lunch)) {
+            $ret['status'] = '@' . $username . ' ' . $restaurants[array_rand($restaurants)];
             return $ret;
         }
     }
