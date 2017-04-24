@@ -167,6 +167,17 @@ function proc($update) {
         }
     }
 
+    if ($is_mention_me) {
+        $rnd = rand(0, 99);
+        if ($rnd < 30) {
+            $ret['status'] = '@' . $username . ' ぽぽぽぽーん！';
+            return $ret;
+        } else if ($rnd < 60) {
+            $ret['status'] = '@' . $username . ' にゃーん！';
+            return $ret;
+        }
+    }
+
     return NULL;
 }
 
