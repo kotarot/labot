@@ -10,7 +10,6 @@ if (php_sapi_name() != 'cli') {
 // タイムラインのアップデートを受け取って
 // 反応する処理を定義する
 function proc($update) {
-    global $pdo;
 
     if (!array_key_exists('data', $update)) {
         return NULL;
@@ -132,7 +131,48 @@ function proc($update) {
         }
     }
 
-    // ランキングとかを取得
+    // ランニング
+    $runnings = array('走った', 'はしった');
+    foreach ($runnings as $running) {
+        if (strpos($content_lower, $running)) {
+            if (preg_match('/-?[0-9]+(\.[0-9]*)?/', $content_lower, $matches)) {
+                $distance = (float)$matches[0];
+                //var_dump($distance);
+                $rank = calc_ranking('running', $username, $distance);
+
+                $ret['status'] = '@' . $username . ' すっごーーーい！君は今月' . round($rank['this_dist'], 2) . 'km、'
+                    . 'これまで合計' . round($rank['total_dist'], 2) . 'km走ったよ！'
+                    . '今月の研究室内ランニング距離ランキングは'
+                    . $rank['this_rank'] . '位だよ！';
+                return $ret;
+            }
+        }
+    }
+
+    // 研究
+    $studyings = array('研究した');
+    foreach ($studyings as $studying) {
+        if (strpos($content_lower, $studying)) {
+            if (preg_match('/-?[0-9]+(\.[0-9]*)?/', $content_lower, $matches)) {
+                $distance = (float)$matches[0];
+                //var_dump($distance);
+                $rank = calc_ranking('studying', $username, $distance);
+
+                $ret['status'] = '@' . $username . ' すっごーーーい！君は今月' . round($rank['this_dist'], 2) . '時間、'
+                    . 'これまで合計' . round($rank['total_dist'], 2) . '時間研究したよ！'
+                    . '今月の研究室内研究時間ランキングは'
+                    . $rank['this_rank'] . '位だよ！';
+                return $ret;
+            }
+        }
+    }
+
+    return NULL;
+}
+
+function calc_ranking($tablename, $username, $distance) {
+    global $pdo;
+
     $thisyear = $nextyear = (int)date('Y');
     $thismonth = (int)date('n');
     $nextmonth = $thismonth + 1;
@@ -147,117 +187,49 @@ function proc($update) {
         $nextmonth = '0' . $nextmonth;
     }
 
-    // ランニング
-    $runnings = array('走った', 'はしった');
-    foreach ($runnings as $running) {
-        if (strpos($content_lower, $running)) {
-            if (preg_match('/[0-9]+(\.[0-9]*)?/', $content_lower, $matches)) {
-                $distance = (float)$matches[0];
-                //var_dump($distance);
-                $stmt = $pdo->prepare('INSERT INTO running (username, score) VALUES (:username, :score)');
-                $stmt->bindParam(':username', $username, PDO::PARAM_STR);
-                $stmt->bindParam(':score', $distance, PDO::PARAM_STR);
-                $stmt->execute();
+    $stmt = $pdo->prepare('INSERT INTO ' . $tablename . ' (username, score) VALUES (:username, :score)');
+    $stmt->bindParam(':username', $username, PDO::PARAM_STR);
+    $stmt->bindParam(':score', $distance, PDO::PARAM_STR);
+    $stmt->execute();
 
-                // これまでの合計
-                $total_rank = -1;
-                $total_dist = -1.0;
-                $r = 1;
-                $stmt = $pdo->query(
-                    "SELECT username, SUM(score) AS s FROM running GROUP BY username ORDER BY s DESC"
-                );
-                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    //var_dump($row);
-                    if ($row['username'] === $username) {
-                        $total_rank = $r;
-                        $total_dist = (float)$row['s'];
-                    }
-                    $r++;
-                }
-
-                // 今月の合計
-                $this_rank = -1;
-                $this_dist = -1.0;
-                $r = 1;
-                $stmt = $pdo->query(
-                    "SELECT username, SUM(case when '" . $thisyear . "-" . $thismonth . "-01' < created_at and " .
-                    "created_at < '" . $nextyear . "-" . $nextmonth . "-01' then score else 0 end) AS s " .
-                    "FROM running GROUP BY username ORDER BY s DESC"
-                );
-                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    //var_dump($row);
-                    if ($row['username'] === $username) {
-                        $this_rank = $r;
-                        $this_dist = (float)$row['s'];
-                    }
-                    $r++;
-                }
-
-                $ret['status'] = '@' . $username . ' すっごーーーい！君は今月' . round($this_dist, 2) . 'km、'
-                    . 'これまで合計' . round($total_dist, 2) . 'km走ったよ！'
-                    . '今月の研究室内ランニング距離ランキングは'
-                    . $this_rank . '位だよ！';
-                return $ret;
-            }
+    // これまでの合計
+    $total_rank = -1;
+    $total_dist = -1.0;
+    $r = 1;
+    $stmt = $pdo->query(
+        "SELECT username, SUM(score) AS s FROM " . $tablename . " GROUP BY username ORDER BY s DESC"
+    );
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        //var_dump($row);
+        if ($row['username'] === $username) {
+            $total_rank = $r;
+            $total_dist = (float)$row['s'];
         }
+        $r++;
     }
 
-    // 研究
-    $studyings = array('研究した');
-    foreach ($studyings as $studying) {
-        if (strpos($content_lower, $studying)) {
-            if (preg_match('/[0-9]+(\.[0-9]*)?/', $content_lower, $matches)) {
-                $distance = (float)$matches[0];
-                //var_dump($distance);
-                $stmt = $pdo->prepare('INSERT INTO studying (username, score) VALUES (:username, :score)');
-                $stmt->bindParam(':username', $username, PDO::PARAM_STR);
-                $stmt->bindParam(':score', $distance, PDO::PARAM_STR);
-                $stmt->execute();
-
-                // これまでの合計
-                $total_rank = -1;
-                $total_dist = -1.0;
-                $r = 1;
-                $stmt = $pdo->query(
-                    "SELECT username, SUM(score) AS s FROM studying GROUP BY username ORDER BY s DESC"
-                );
-                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    //var_dump($row);
-                    if ($row['username'] === $username) {
-                        $total_rank = $r;
-                        $total_dist = (float)$row['s'];
-                    }
-                    $r++;
-                }
-
-                // 今月の合計
-                $this_rank = -1;
-                $this_dist = -1.0;
-                $r = 1;
-                $stmt = $pdo->query(
-                    "SELECT username, SUM(case when '" . $thisyear . "-" . $thismonth . "-01' < created_at and " .
-                    "created_at < '" . $nextyear . "-" . $nextmonth . "-01' then score else 0 end) AS s " .
-                    "FROM studying GROUP BY username ORDER BY s DESC"
-                );
-                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    //var_dump($row);
-                    if ($row['username'] === $username) {
-                        $this_rank = $r;
-                        $this_dist = (float)$row['s'];
-                    }
-                    $r++;
-                }
-
-                $ret['status'] = '@' . $username . ' すっごーーーい！君は今月' . round($this_dist, 2) . '時間、'
-                    . 'これまで合計' . round($total_dist, 2) . '時間研究したよ！'
-                    . '今月の研究室内研究時間ランキングは'
-                    . $this_rank . '位だよ！';
-                return $ret;
-            }
+    // 今月の合計
+    $this_rank = -1;
+    $this_dist = -1.0;
+    $r = 1;
+    $stmt = $pdo->query(
+        "SELECT username, SUM(case when '" . $thisyear . "-" . $thismonth . "-01' < created_at and " .
+        "created_at < '" . $nextyear . "-" . $nextmonth . "-01' then score else 0 end) AS s " .
+        "FROM " . $tablename . " GROUP BY username ORDER BY s DESC"
+    );
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        //var_dump($row);
+        if ($row['username'] === $username) {
+            $this_rank = $r;
+            $this_dist = (float)$row['s'];
         }
+        $r++;
     }
 
-    return NULL;
+    return array(
+        'this_rank'  => $this_rank,  'this_dist'  => $this_dist,
+        'total_rank' => $total_rank, 'total_dist' => $total_dist
+    );
 }
 
 // MySQL接続
