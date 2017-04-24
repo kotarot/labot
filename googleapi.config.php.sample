@@ -6,3 +6,4 @@
 // Google Calendar 用
 define('CALENDAR_ID',      'primary');
 define('CALENDAR_ID_BOSS', 'XXXXXXXX@example.com');
+define('CALENDAR_ID_ZEMI', 'XXXXXXXX@example.com');
