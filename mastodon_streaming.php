@@ -135,12 +135,13 @@ function proc($update) {
     $runnings = array('走った', 'はしった');
     foreach ($runnings as $running) {
         if (strpos($content_lower, $running)) {
-            if (preg_match('/-?[0-9]+(\.[0-9]*)?/', $content_lower, $matches)) {
-                $distance = (float)$matches[0];
+            if (preg_match('/-?[0-9]+(\.[0-9]*)?km/', $content_lower, $matches)) {
+                $distance = (float)substr($matches[0], 0, -2);
                 //var_dump($distance);
                 $rank = calc_ranking('running', $username, $distance);
 
-                $ret['status'] = '@' . $username . ' すっごーーーい！君は今月' . round($rank['this_dist'], 2) . 'km、'
+                $ret['status'] = '@' . $username . ' すっごーーーい！君は今月'
+                    . round($rank['this_dist'], 2) . 'km、'
                     . 'これまで合計' . round($rank['total_dist'], 2) . 'km走ったよ！'
                     . '今月の研究室内ランニング距離ランキングは'
                     . $rank['this_rank'] . '位だよ！';
@@ -150,15 +151,16 @@ function proc($update) {
     }
 
     // 研究
-    $studyings = array('研究した');
+    $studyings = array('研究した', 'けんきゅうした');
     foreach ($studyings as $studying) {
         if (strpos($content_lower, $studying)) {
-            if (preg_match('/-?[0-9]+(\.[0-9]*)?/', $content_lower, $matches)) {
-                $distance = (float)$matches[0];
+            if (preg_match('/-?[0-9]+(\.[0-9]*)?時間/u', $content_lower, $matches)) {
+                $distance = (float)mb_substr($matches[0], 0, -2);
                 //var_dump($distance);
                 $rank = calc_ranking('studying', $username, $distance);
 
-                $ret['status'] = '@' . $username . ' すっごーーーい！君は今月' . round($rank['this_dist'], 2) . '時間、'
+                $ret['status'] = '@' . $username . ' すっごーーーい！君は今月'
+                    . round($rank['this_dist'], 2) . '時間、'
                     . 'これまで合計' . round($rank['total_dist'], 2) . '時間研究したよ！'
                     . '今月の研究室内研究時間ランキングは'
                     . $rank['this_rank'] . '位だよ！';
