@@ -7,13 +7,5 @@
 define('BOT_NAME', 'Labot');
 define('BOT_ICON', ':speak_no_evil:');
 
-// Google Calendar 用
-define('CALENDAR_ID',      'primary');
-define('CALENDAR_ID_BOSS', 'XXXXXXXX@example.com');
-
 // Slack 用
 define('SLACK_API_KEY', 'XXXXXXXX');
-
-// OpenWeatherMap 用
-define('OWM_API_KEY', 'XXXXXXXX');
-define('OWM_CITY',    'Tokyo');

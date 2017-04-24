@@ -1,0 +1,8 @@
+<?php
+/**
+ * Fill API keys and rename this file to `openweathermap.config.php`
+ */
+
+// OpenWeatherMap 用
+define('OWM_API_KEY', 'XXXXXXXX');
+define('OWM_CITY',    'Tokyo');
