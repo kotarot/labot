@@ -67,8 +67,8 @@ function get_postdata($todaystr) {
         ),
         // 気温
         'temperature' => array(
-            'max' => -999,
-            'min' => 999
+            'max' => ~PHP_INT_MAX,
+            'min' => PHP_INT_MAX
         )
     );
 
@@ -97,8 +97,10 @@ function get_postdata($todaystr) {
             // 最高気温/最低気温
             if (substr($slot['dt_txt'], 0, 10) === $todaystr) {
                 //print $slot['main']['temp'] . "\n";
-                $postdata['temperature']['max'] = max((int)round($slot['main']['temp']), $postdata['temperature']['max']);
-                $postdata['temperature']['min'] = min((int)round($slot['main']['temp']), $postdata['temperature']['min']);
+                $postdata['temperature']['max'] = max(
+                    (int)round($slot['main']['temp']), $postdata['temperature']['max']);
+                $postdata['temperature']['min'] = min(
+                    (int)round($slot['main']['temp']), $postdata['temperature']['min']);
             }
         }
     }
