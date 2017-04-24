@@ -167,6 +167,15 @@ function proc($update) {
         }
     }
 
+    // にゃーん
+    $nyans = array('にゃーん', 'にゃん');
+    foreach ($nyans as $nyan) {
+        if (strpos($content_lower, $nyan)) {
+            $ret['status'] = '@' . $username . ' にゃーん！';
+            return $ret;
+        }
+    }
+
     if ($is_mention_me) {
         $rnd = rand(0, 99);
         if ($rnd < 30) {
