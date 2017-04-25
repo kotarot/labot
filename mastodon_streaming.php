@@ -83,6 +83,15 @@ function proc($update) {
         }
     }
 
+    // 野菜
+    $yasais = array('野菜', 'やさい');
+    foreach ($yasais as $yasai) {
+        if (strpos($content_lower, $yasai)) {
+            $ret['status'] = '@' . $username . ' つ :tomato: :eggplant: :carrot: :hot_pepper: :cucumber: :salad: :tomato: :tomato: :tomato:';
+            return $ret;
+        }
+    }
+
     // 時間
     $whattimes = array('何時', 'なんじ');
     foreach ($whattimes as $whattime) {
