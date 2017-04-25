@@ -132,7 +132,7 @@ function proc($update) {
     $lunches = array('昼ごはん', '昼ご飯', '昼飯', 'ランチ');
     $restaurants = array(
         '学食', 'ひまわり', 'ヒマラヤ', 'ダイラバ', 'こがね製麺',
-        '麺爺', '助鮨', 'ビッグボーイ', 'マクドナルド');
+        '麺爺', '助鮨', '蕎麦', 'ビッグボーイ', 'マクドナルド');
     foreach ($lunches as $lunch) {
         if (strpos($content_lower, $lunch)) {
             $ret['status'] = '@' . $username . ' ' . $restaurants[array_rand($restaurants)];
