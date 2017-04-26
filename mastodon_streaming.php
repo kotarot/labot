@@ -280,72 +280,73 @@ try {
         MASTODON_MYSQL_USER, MASTODON_MYSQL_PASSWORD
     );
 
-// 参考
-// PHPでMastodonのStreaming APIを受信する。 - Qiita
-// http://qiita.com/yyano/items/841f79266faf2dc8b6dc
+    // 参考
+    // PHPでMastodonのStreaming APIを受信する。 - Qiita
+    // http://qiita.com/yyano/items/841f79266faf2dc8b6dc
 
-$fp = fsockopen('ssl://mstdn.togawa.cs.waseda.ac.jp', 443, $errno, $errstr, 5);
-$req = [
-    'GET /api/v1/streaming/user HTTP/1.1',
-    'Host: mstdn.togawa.cs.waseda.ac.jp',
-    'User-Agent: Labot',
-    'Authorization: Bearer ' . MASTODON_ACCESS_TOKEN
-];
+    $fp = fsockopen('ssl://mstdn.togawa.cs.waseda.ac.jp', 443, $errno, $errstr, 5);
+    $req = [
+        'GET /api/v1/streaming/user HTTP/1.1',
+        'Host: mstdn.togawa.cs.waseda.ac.jp',
+        'User-Agent: Labot',
+        'Authorization: Bearer ' . MASTODON_ACCESS_TOKEN
+    ];
 
-// GET リクエスト送信
-fwrite($fp, implode($req, "\r\n") . "\r\n\r\n");
+    // GET リクエスト送信
+    fwrite($fp, implode($req, "\r\n") . "\r\n\r\n");
 
-// データを受け取る
-$is_event_update = false;
-while (!feof($fp)) {
-    $data = fgets($fp);
-    $trimed = trim($data);
-    var_dump($trimed);
+    // データを受け取る
+    $is_event_update = false;
+    while (!feof($fp)) {
+        $data = fgets($fp);
+        $trimed = trim($data);
+        var_dump($trimed);
 
-    // 返ってくるJSONのキーや値がダブルクオーテーションで囲われていなくて
-    // JSONの仕様を満たしていないため、パーズできない。
-    // 無理やり置換する。
-    $replaced = $trimed;
-    $keywords = array('event', 'update', 'notification', 'delete', 'data');
-    foreach ($keywords as $keyword) {
-        if (strpos($replaced, $keyword) !== false) {
-            $replaced = str_replace($keyword, '"' . $keyword . '"', $replaced);
-        }
-    }
-    $decoded = json_decode('{' . $replaced . '}', true);
-    //var_dump($decoded);
-
-    if (!is_null($decoded)) {
-        // status の update イベントが来た！
-        if (array_key_exists('event', $decoded)) {
-            if ($decoded['event'] === 'update') {
-                $is_event_update = true;
+        // 返ってくるJSONのキーや値がダブルクオーテーションで囲われていなくて
+        // JSONの仕様を満たしていないため、パーズできない。
+        // 無理やり置換する。
+        $replaced = $trimed;
+        $keywords = array('event', 'update', 'notification', 'delete', 'data');
+        foreach ($keywords as $keyword) {
+            if (strpos($replaced, $keyword) !== false) {
+                $replaced = str_replace($keyword, '"' . $keyword . '"', $replaced);
             }
         }
-        // update イベントの payload を読む
-        if ($is_event_update && array_key_exists('data', $decoded)) {
-            print "payload:\n";
-            var_dump($decoded);
-            $is_event_update = false;
+        $decoded = json_decode('{' . $replaced . '}', true);
+        //var_dump($decoded);
 
-            // 処理する
-            $proced = proc($decoded);
-            var_dump($proced);
-            if (!is_null($proced)) {
-                $post_data = 'access_token=' . MASTODON_ACCESS_TOKEN;
-                foreach ($proced as $k => $v) {
-                    $post_data .= '&' . $k . '=' . urlencode($v);
+        if (!is_null($decoded)) {
+            // status の update イベントが来た！
+            if (array_key_exists('event', $decoded)) {
+                if ($decoded['event'] === 'update') {
+                    $is_event_update = true;
                 }
-                $command = 'curl -X POST -d "' . $post_data . '" -Ss https://mstdn.togawa.cs.waseda.ac.jp/api/v1/statuses';
-                exec($command, $out, $ret);
-                var_dump($out);
-                print $ret . "\n";
+            }
+            // update イベントの payload を読む
+            if ($is_event_update && array_key_exists('data', $decoded)) {
+                print "payload:\n";
+                var_dump($decoded);
+                $is_event_update = false;
+
+                // 処理する
+                $proced = proc($decoded);
+                var_dump($proced);
+                if (!is_null($proced)) {
+                    $post_data = 'access_token=' . MASTODON_ACCESS_TOKEN;
+                    foreach ($proced as $k => $v) {
+                        $post_data .= '&' . $k . '=' . urlencode($v);
+                    }
+                    $command = 'curl -X POST -d "' . $post_data
+                             . '" -Ss https://mstdn.togawa.cs.waseda.ac.jp/api/v1/statuses';
+                    exec($command, $out, $ret);
+                    var_dump($out);
+                    print $ret . "\n";
+                }
             }
         }
     }
-}
 
-fclose($fp);
+    fclose($fp);
 
 } catch (PDOException $e) {
     print($e->getMessage());
