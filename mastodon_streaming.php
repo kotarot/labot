@@ -1,6 +1,7 @@
 <?php
 require_once(__DIR__ . '/mastodon.config.php');
 require_once(__DIR__ . '/mastodon_googleapi.php');
+require_once(__DIR__ . '/mstranslator.config.php');
 
 if (php_sapi_name() != 'cli') {
   throw new Exception('This application must be run on the command line.');
@@ -23,6 +24,7 @@ function proc($update) {
     $account_id    = $update['data']['account']['id'];
     $content       = $update['data']['content'];
     $content_lower = strtolower($content);
+    $content_raw   = strip_tags($content);
     $username      = $update['data']['account']['username'];
 
     if ($username === MASTODON_USERNAME) {
@@ -42,6 +44,21 @@ function proc($update) {
 
     // return
     $ret = array('visibility' => 'public', 'in_reply_to_id' => $id);
+
+
+    ////////////////
+    // 返信処理
+    ////////////////
+
+    // マルチバイト文字が含まれていないときのみ
+    // 英語から日本語翻訳
+    if (mb_strlen($content_raw) == mb_strwidth($content_raw)) {
+        $translated = translate($content_raw);
+        if ($translated) {
+            $ret['status'] = '@' . $username . ' [翻訳] ' . $translated;
+            return $ret;
+        }
+    }
 
     // 固定キーワードと返答の定義
     $static_reactions = array(
@@ -280,6 +297,39 @@ function calc_ranking($tablename, $username, $distance) {
     );
 }
 
+// Microsoft Translator API
+// 英語テキストを受け取って日本語を返す
+function translate($texten) {
+    $command = 'curl -X POST'
+             . ' --header "Content-Type: application/json" --header "Accept: application/jwt"'
+             . ' --header "Ocp-Apim-Subscription-Key: ' . MSTRANSLATOR_KEY . '" --data ""'
+             . ' -Ss https://api.cognitive.microsoft.com/sts/v1.0/issueToken';
+    exec($command, $out, $ret);
+    //var_dump($out);
+    //var_dump($ret);
+    if ($ret !== 0) {
+        return NULL;
+    }
+    $token = $out[0];
+
+    $command = 'curl --header "Authorization: Bearer ' . $token . '"'
+             . ' -Ss "https://api.microsofttranslator.com/v2/http.svc/Translate?'
+             . 'text=' . urlencode($texten) . '&from=en&to=ja&category=generalnn"';
+    exec($command, $out, $ret);
+    //var_dump($out);
+    //var_dump(strip_tags($out[1]));
+    //var_dump($ret);
+    if ($ret !== 0) {
+        return NULL;
+    }
+
+    $translated = strip_tags($out[1]);
+    $translated = str_replace('@' . MASTODON_USERNAME . ' ', '', $translated);
+    var_dump($translated);
+
+    return $translated;
+}
+
 // MySQL接続
 try {
     $pdo = new PDO(
@@ -340,6 +390,9 @@ try {
                 var_dump($proced);
                 if (!is_null($proced)) {
                     $post_data = 'access_token=' . MASTODON_ACCESS_TOKEN;
+                    if (500 <= mb_strlen($proced['status'])) {
+                        $proced['status'] = mb_substr($proced['status'], 0, 500);
+                    }
                     foreach ($proced as $k => $v) {
                         $post_data .= '&' . $k . '=' . urlencode($v);
                     }

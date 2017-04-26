@@ -1,0 +1,7 @@
+<?php
+/**
+ * Fill API keys and rename this file to `mstranslator.config.php`
+ */
+
+// Microsoft Translator API 用
+define('MSTRANSLATOR_KEY', 'XXXXXXXX');
