@@ -41,7 +41,8 @@ if ($last_yamanote[0] === 'BAD' && $current_yamanote === -1) {
     $text_yamanote = '山手線は正常運転中だよ :stuck_out_tongue_winking_eye:';
     $status_yamanote = 'OK';
 } else if ($last_yamanote[0] === 'OK' && 0 < $current_yamanote) {
-    $text_yamanote = '山手線が遅延しているみたい! 気をつけて :innocent:';
+    $text_yamanote = "山手線が遅延しているみたい! 気をつけて :innocent: \n"
+                   . 'https://transit.yahoo.co.jp/traininfo/area/4/';
     $status_yamanote = 'BAD';
 }
 file_put_contents(__DIR__ . '/last_yamanote.txt', $status_yamanote . ',' . $current_unixtime . "\n");
@@ -53,7 +54,8 @@ if ($last_fukutoshin[0] === 'BAD' && $current_fukutoshin === -1) {
     $text_fukutoshin = '副都心線は正常運転中だよ :stuck_out_tongue_winking_eye:';
     $status_fukutoshin = 'OK';
 } else if ($last_fukutoshin[0] === 'OK' && 0 < $current_fukutoshin) {
-    $text_fukutoshin = '副都心線が遅延しているみたい! 気をつけて :innocent:';
+    $text_fukutoshin = "副都心線が遅延しているみたい! 気をつけて :innocent: \n"
+                     . 'https://transit.yahoo.co.jp/traininfo/area/4/';
     $status_fukutoshin = 'BAD';
 }
 file_put_contents(__DIR__ . '/last_fukutoshin.txt', $status_fukutoshin . ',' . $current_unixtime . "\n");
