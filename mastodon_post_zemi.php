@@ -15,7 +15,7 @@ if ($argv[1] === 'tomorrow' && $is_teizemi_tomorrow) {
 }
 if ($text !== '') {
     $command = 'curl -X POST -d "access_token=' . MASTODON_ACCESS_TOKEN . '&status=' . $text
-        . '&visibility=private" -Ss https://mstdn.togawa.cs.waseda.ac.jp/api/v1/statuses';
+        . '&visibility=private" -Ss https://' . MASTODON_HOST . '/api/v1/statuses';
     exec($command, $out, $ret);
     var_dump($out);
     print $ret . "\n";

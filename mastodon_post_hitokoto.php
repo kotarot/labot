@@ -30,7 +30,7 @@ if (array_key_exists($argv[1], $text_candidates)) {
 }
 if ($text !== '') {
     $command = 'curl -X POST -d "access_token=' . MASTODON_ACCESS_TOKEN . '&status=' . $text
-             . '&visibility=public" -Ss https://mstdn.togawa.cs.waseda.ac.jp/api/v1/statuses';
+             . '&visibility=public" -Ss https://' . MASTODON_HOST . '/api/v1/statuses';
     exec($command, $out, $ret);
     var_dump($out);
     print $ret . "\n";

@@ -62,7 +62,7 @@ file_put_contents(__DIR__ . '/last_fukutoshin.txt', $status_fukutoshin . ',' . $
 // Mastodon 投稿処理
 if ($text_yamanote !== '') {
     $command = 'curl -X POST -d "access_token=' . MASTODON_ACCESS_TOKEN . '&status=' . urlencode($text_yamanote)
-             . '&visibility=public" -Ss https://mstdn.togawa.cs.waseda.ac.jp/api/v1/statuses';
+             . '&visibility=public" -Ss https://' . MASTODON_HOST . '/api/v1/statuses';
     exec($command, $out, $ret);
     var_dump($out);
     print $ret . "\n";
@@ -72,7 +72,7 @@ if ($text_yamanote !== '') {
 
 if ($text_fukutoshin !== '') {
     $command = 'curl -X POST -d "access_token=' . MASTODON_ACCESS_TOKEN . '&status=' . urlencode($text_fukutoshin)
-             . '&visibility=public" -Ss https://mstdn.togawa.cs.waseda.ac.jp/api/v1/statuses';
+             . '&visibility=public" -Ss https://' . MASTODON_HOST . '/api/v1/statuses';
     exec($command, $out, $ret);
     var_dump($out);
     print $ret . "\n";

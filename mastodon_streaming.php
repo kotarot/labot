@@ -126,7 +126,7 @@ function proc($update) {
     // 平成何年
     $heiseis = array('平成何年');
     foreach ($heiseis as $heisei) {
-        if (strpos($content_lower, $heisei)) {
+        if (strpos($content_lower, $heisei) !== false) {
             $hyear = -1;
             if (preg_match('/[0-9]+/', $content_lower, $matches)) {
                 $hyear = (int)$matches[0] - 1988;
@@ -143,7 +143,7 @@ function proc($update) {
     //var_dump($upcoming_teizemi);
     $teizemis = array('定期ゼミ', '定ゼミ', 'ゼミ');
     foreach ($teizemis as $teizemi) {
-        if (strpos($content_lower, $teizemi) && strpos($content_lower, 'いつ')) {
+        if (strpos($content_lower, $teizemi) !== false && strpos($content_lower, 'いつ') !== false) {
             $ret['status'] = '@' . $username . ' 次の定ゼミは ' . $upcoming_teizemi[0]['date'] . ' だよ';
             $ret['visibility'] = 'private';
             return $ret;
@@ -153,7 +153,7 @@ function proc($update) {
     // ランニング
     $runnings = array('走った', 'はしった');
     foreach ($runnings as $running) {
-        if (strpos($content_lower, $running)) {
+        if (strpos($content_lower, $running) !== false) {
             if (preg_match('/-?[0-9]+(\.[0-9]*)?km/', $content_lower, $matches)) {
                 $distance = (float)substr($matches[0], 0, -2);
                 //var_dump($distance);
@@ -172,7 +172,7 @@ function proc($update) {
     // 研究
     $studyings = array('研究した', 'けんきゅうした');
     foreach ($studyings as $studying) {
-        if (strpos($content_lower, $studying)) {
+        if (strpos($content_lower, $studying) !== false) {
             if (preg_match('/-?[0-9]+(\.[0-9]*)?時間/u', $content_lower, $matches)) {
                 $distance = (float)mb_substr($matches[0], 0, -2);
                 //var_dump($distance);
@@ -210,7 +210,7 @@ function proc($update) {
 function contains_and_reply($content, $keywords, $reactions, $cond = false) {
     if ($cond) {
         foreach ($keywords as $keyword) {
-            if (strpos($content, $keyword)) {
+            if (strpos($content, $keyword) !== false) {
                 return $reactions[array_rand($reactions)];
             }
         }
@@ -291,10 +291,10 @@ try {
     // PHPでMastodonのStreaming APIを受信する。 - Qiita
     // http://qiita.com/yyano/items/841f79266faf2dc8b6dc
 
-    $fp = fsockopen('ssl://mstdn.togawa.cs.waseda.ac.jp', 443, $errno, $errstr, 5);
+    $fp = fsockopen('ssl://' . MASTODON_HOST, 443, $errno, $errstr, 5);
     $req = [
         'GET /api/v1/streaming/user HTTP/1.1',
-        'Host: mstdn.togawa.cs.waseda.ac.jp',
+        'Host: ' . MASTODON_HOST,
         'User-Agent: Labot',
         'Authorization: Bearer ' . MASTODON_ACCESS_TOKEN
     ];
@@ -344,7 +344,7 @@ try {
                         $post_data .= '&' . $k . '=' . urlencode($v);
                     }
                     $command = 'curl -X POST -d "' . $post_data
-                             . '" -Ss https://mstdn.togawa.cs.waseda.ac.jp/api/v1/statuses';
+                             . '" -Ss https://' . MASTODON_HOST . '/api/v1/statuses';
                     exec($command, $out, $ret);
                     var_dump($out);
                     print $ret . "\n";
