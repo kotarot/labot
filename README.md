@@ -10,7 +10,7 @@
 */10 * * * * /path/to/labot/hackey_minutely.sh > /dev/null 2>&1
 
 # Mastodon
-0 8 * * *   /path/to/labot/mastodon_post_daily.sh
+0 8 * * *   php /path/to/labot/mastodon_post_yahooweather.php; php /path/to/labot/mastodon_post_zemi.php today
 0 10 * * *  php /path/to/labot/mastodon_post_hitokoto.php coffee
 0 12 * * *  php /path/to/labot/mastodon_post_hitokoto.php lunch
 0 14 * * *  php /path/to/labot/mastodon_post_hitokoto.php nap
