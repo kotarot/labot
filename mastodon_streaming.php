@@ -76,6 +76,13 @@ function proc($update) {
                 'つ :tomato: :eggplant: :carrot: :hot_pepper: :cucumber: :salad: :tomato: :tomato: :tomato:'),
             'cond'      => true
         ),
+        // 果物
+        array(
+            'keywords'  => array('果物', 'くだもの', 'フルーツ'),
+            'reactions' => array(
+                'つ :grapes: :melon: :watermelon: :tangerine: :lemon: :banana: :green_apple: :pear: :peach: :cherries: :strawberry: :kiwi: :banana: :banana: :banana: :banana: :banana: :banana:'),
+            'cond'      => true
+        ),
         // へごちん
         array(
             'keywords'  => array('へご'),
