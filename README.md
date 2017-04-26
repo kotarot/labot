@@ -18,7 +18,9 @@
 0 17 * * *  php /path/to/labot/mastodon_post_hitokoto.php beer
 0 21 * * *  php /path/to/labot/mastodon_post_zemi.php tomorrow
 0 0 * * *   php /path/to/labot/mastodon_post_hitokoto.php gotobed
-*/1 * * * * php /path/to/labot/mastodon_post_train.php
+
+*/1  * * * * php /path/to/labot/mastodon_post_train.php
+*/10 * * * * php /path/to/labot/mastodon_post_rainfall.php
 
 */1 * * * * /path/to/labot/mastodon_streaming.sh
 ```

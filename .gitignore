@@ -8,9 +8,11 @@ openweathermap.config.php
 slack_post.config.php
 hackey.config.php
 linebot.config.php
+yahoodev.config.php
 
 # Mastodon
 mastodon.config.php
 mastodonsocial_post.config.php
 last_yamanote.txt
 last_fukutoshin.txt
+last_rainfall.txt

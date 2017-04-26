@@ -1,0 +1,10 @@
+<?php
+/**
+ * Fill API keys and rename this file to `yahoodev.config.php`
+ */
+
+// Yahooデベロッパーネットワーク 用
+define('YAHOODEV_APPID', 'XXXXXXXX');
+
+// 緯度経度
+define('YAHOODEV_COORDINATES', 'X.XXXXXX,Y.YYYYYY');
