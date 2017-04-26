@@ -4,6 +4,8 @@
  */
 
 // Mastodon 用
+define('MASTODON_HOST', 'example.com');
+
 define('MASTODON_USERNAME',     'XXXXXXXX');
 define('MASTODON_ACCESS_TOKEN', 'XXXXXXXX');
 
