@@ -24,7 +24,7 @@ function proc($update) {
     $account_id    = $update['data']['account']['id'];
     $content       = $update['data']['content'];
     $content_lower = strtolower($content);
-    $content_raw   = strip_tags($content);
+    $content_raw   = strip_tags(str_replace('<br>', ' ', str_replace('<br />', ' ', $content)));
     $username      = $update['data']['account']['username'];
 
     if ($username === MASTODON_USERNAME) {
@@ -53,10 +53,13 @@ function proc($update) {
     // マルチバイト文字が含まれていないときのみ
     // 英語から日本語翻訳
     if (mb_strlen($content_raw) == mb_strwidth($content_raw)) {
-        $translated = translate($content_raw);
-        if ($translated) {
-            $ret['status'] = '@' . $username . ' [翻訳] ' . $translated;
-            return $ret;
+        // URLは翻訳しない (雑判定)
+        if (mb_substr($content_raw, 0, 4) !== 'http') {
+            $translated = translate($content_raw);
+            if ($translated) {
+                $ret['status'] = '@' . $username . ' :flag_gb:→:flag_jp: ' . $translated;
+                return $ret;
+            }
         }
     }
 
