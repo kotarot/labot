@@ -43,71 +43,75 @@ function proc($update) {
     // return
     $ret = array('visibility' => 'public', 'in_reply_to_id' => $id);
 
-    // あいさつ的な
-    $greetings = array('hello' => 'hi!', 'hi' => 'hey!', 'hey' => 'hello!');
-    if ($is_mention_me) {
-        foreach ($greetings as $greeting => $reply) {
-            if (strpos($content_lower, $greeting)) {
-                $ret['status'] = '@' . $username . ' ' . $reply;
-                return $ret;
-            }
-        }
-    }
-
-    // 有能、かわいい
-    $yunos = array('有能', '可愛い', 'かわいい');
-    if ($is_mention_me) {
-        foreach ($yunos as $yuno) {
-            if (strpos($content_lower, $yuno)) {
-                $ret['status'] = '@' . $username . ' えへへ :kissing_closed_eyes:';
-                return $ret;
-            }
-        }
-    }
-
-    // お腹すいた
-    $hungrys = array('空いた', 'すいた', '減った', 'へった');
-    foreach ($hungrys as $hungry) {
-        if (strpos($content_lower, $hungry)) {
-            $ret['status'] = '@' . $username . ' つ :ramen: :sushi:';
-            return $ret;
-        }
-    }
-
-    // おやつ系
-    $okashis = array('お菓子', 'おかし', 'おやつ', 'デザート', 'アイス');
-    foreach ($okashis as $okashi) {
-        if (strpos($content_lower, $okashi)) {
-            $ret['status'] = '@' . $username . ' つ :icecream: :shaved_ice: :ice_cream:';
-            return $ret;
-        }
-    }
-
-    // 野菜
-    $yasais = array('野菜', 'やさい');
-    foreach ($yasais as $yasai) {
-        if (strpos($content_lower, $yasai)) {
-            $ret['status'] = '@' . $username .
-                ' つ :tomato: :eggplant: :carrot: :hot_pepper: :cucumber: :salad: :tomato: :tomato: :tomato:';
-            return $ret;
-        }
-    }
-
-    // へごちん
-    $hegochins = array('へご');
-    foreach ($hegochins as $hegochin) {
-        if (strpos($content_lower, $hegochin)) {
-            $ret['status'] = '@' . $username .
-                ' な゛ん゛て゛す゛か゛〜 や゛め゛て゛く゛た゛さ゛い゛よ゛〜';
-            return $ret;
-        }
-    }
-
-    // 時間
-    $whattimes = array('何時', 'なんじ');
-    foreach ($whattimes as $whattime) {
-        if (strpos($content_lower, $whattime)) {
-            $ret['status'] = '@' . $username . ' ' . date(DATE_ATOM);
+    // 固定キーワードと返答の定義
+    $static_reactions = array(
+        // あいさつ的な
+        array(
+            'keywords'  => array('hello', 'hi', 'hey'),
+            'reactions' => array('hello', 'hi', 'hey'),
+            'cond'      => $is_mention_me
+        ),
+        // 有能、かわいい
+        array(
+            'keywords'  => array('有能', '可愛い', 'かわいい'),
+            'reactions' => array('えへへ :kissing_closed_eyes:'),
+            'cond'      => $is_mention_me
+        ),
+        // お腹すいた
+        array(
+            'keywords'  => array('空いた', 'すいた', '減った', 'へった'),
+            'reactions' => array('つ :ramen: :sushi:'),
+            'cond'      => true
+        ),
+        // おやつ系
+        array(
+            'keywords'  => array('お菓子', 'おかし', 'おやつ', 'デザート', 'アイス'),
+            'reactions' => array('つ :icecream: :shaved_ice: :ice_cream:'),
+            'cond'      => true
+        ),
+        // 野菜
+        array(
+            'keywords'  => array('野菜', 'やさい'),
+            'reactions' => array(
+                'つ :tomato: :eggplant: :carrot: :hot_pepper: :cucumber: :salad: :tomato: :tomato: :tomato:'),
+            'cond'      => true
+        ),
+        // へごちん
+        array(
+            'keywords'  => array('へご'),
+            'reactions' => array('な゛ん゛て゛す゛か゛〜 や゛め゛て゛く゛た゛さ゛い゛よ゛〜'),
+            'cond'      => true
+        ),
+        // 時間
+        array(
+            'keywords'  => array('何時', 'なんじ'),
+            'reactions' => array(date(DATE_ATOM)),
+            'cond'      => true
+        ),
+        // 昼飯
+        array(
+            'keywords'  => array('昼ごはん', '昼ご飯', '昼飯', 'ランチ', 'ごはん', 'ご飯'),
+            'reactions' => array(
+                '学食', 'ひまわり', 'ヒマラヤ', 'ダイラバ', 'こがね製麺',
+                '助鮨', '蕎麦', 'ビッグボーイ', 'マクドナルド',
+                '麺爺 :ramen: :older_man:', '麺爺 :ramen: :older_man:', '麺爺 :ramen: :older_man:',
+                '麺爺 :ramen: :older_man:', '麺爺 :ramen: :older_man:', '麺爺 :ramen: :older_man:',
+                '麺爺 :ramen: :older_man:', '麺爺 :ramen: :older_man:', '麺爺 :ramen: :older_man:',
+                '麺爺 :ramen: :older_man:', '麺爺 :ramen: :older_man:', '麺爺 :ramen: :older_man:'),
+            'cond'      => true
+        ),
+        // にゃーん
+        array(
+            'keywords'  => array('にゃーん', 'にゃん'),
+            'reactions' => array('にゃーん！'),
+            'cond'      => true
+        )
+    );
+    foreach ($static_reactions as $static_reaction) {
+        $reply = contains_and_reply($content_lower,
+            $static_reaction['keywords'], $static_reaction['reactions'], $static_reaction['cond']);
+        if ($reply) {
+            $ret['status'] = '@' . $username . ' ' . $reply;
             return $ret;
         }
     }
@@ -135,18 +139,6 @@ function proc($update) {
         if (strpos($content_lower, $teizemi) && strpos($content_lower, 'いつ')) {
             $ret['status'] = '@' . $username . ' 次の定ゼミは ' . $upcoming_teizemi[0]['date'] . ' だよ';
             $ret['visibility'] = 'private';
-            return $ret;
-        }
-    }
-
-    // 昼飯
-    $lunches = array('昼ごはん', '昼ご飯', '昼飯', 'ランチ');
-    $restaurants = array(
-        '学食', 'ひまわり', 'ヒマラヤ', 'ダイラバ', 'こがね製麺',
-        '麺爺', '助鮨', '蕎麦', 'ビッグボーイ', 'マクドナルド');
-    foreach ($lunches as $lunch) {
-        if (strpos($content_lower, $lunch)) {
-            $ret['status'] = '@' . $username . ' ' . $restaurants[array_rand($restaurants)];
             return $ret;
         }
     }
@@ -189,15 +181,7 @@ function proc($update) {
         }
     }
 
-    // にゃーん
-    $nyans = array('にゃーん', 'にゃん');
-    foreach ($nyans as $nyan) {
-        if (strpos($content_lower, $nyan)) {
-            $ret['status'] = '@' . $username . ' にゃーん！';
-            return $ret;
-        }
-    }
-
+    // その他返信
     if ($is_mention_me) {
         $rnd = rand(0, 99);
         if ($rnd < 30) {
@@ -209,6 +193,21 @@ function proc($update) {
         }
     }
 
+    return NULL;
+}
+
+// 関数 contains_and_reply
+// $content に $keywords のいずれかが含まれている場合、
+// $reactions の中からランダムに返す。
+// ただし、$cond が真の場合のみ。
+function contains_and_reply($content, $keywords, $reactions, $cond = false) {
+    if ($cond) {
+        foreach ($keywords as $keyword) {
+            if (strpos($content, $keyword)) {
+                return $reactions[array_rand($reactions)];
+            }
+        }
+    }
     return NULL;
 }
 
