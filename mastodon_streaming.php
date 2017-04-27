@@ -2,6 +2,7 @@
 require_once(__DIR__ . '/mastodon.config.php');
 require_once(__DIR__ . '/mastodon_googleapi.php');
 require_once(__DIR__ . '/msazure.config.php');
+require_once(__DIR__ . '/yahoodev.config.php');
 
 if (php_sapi_name() != 'cli') {
   throw new Exception('This application must be run on the command line.');
@@ -236,9 +237,9 @@ function proc($update) {
     $command = 'curl --header "Ocp-Apim-Subscription-Key: ' . MSSEARCH_KEY . '"'
              . ' -Ss "https://api.cognitive.microsoft.com/bing/v5.0/search?q='
              . urlencode($content_raw) . '&mkt=ja-JP"';
-    exec($command, $out, $retcode);
-    //var_dump($out);
-    $searchres = json_decode($out[0], true);
+    exec($command, $outcomp, $retcomp);
+    //var_dump($outcomp);
+    $searchres = json_decode($outcomp[0], true);
     //var_dump($searchres);
     if (array_key_exists('computation', $searchres)) {
         $ret['status'] = '@' . $username . ' ' . $searchres['computation']['value'];
@@ -279,35 +280,43 @@ function proc($update) {
             }
         }
 
-        // 画像検索
-        var_dump($content_raw);
-        $command = 'curl --header "Ocp-Apim-Subscription-Key: ' . MSSEARCH_KEY . '"'
-                 . ' -Ss "https://api.cognitive.microsoft.com/bing/v5.0/images/search?q='
-                 . urlencode($content_raw) . '&mkt=ja-JP"';
-        exec($command, $outimage, $retcode);
-        //var_dump($outimage);
+        // 形態素の数が3以下なら画像検索
+        $ma_count = get_ma_count($content_raw);
+        //var_dump($ma_count);
+        if ($ma_count <= 3) {
+            // 画像検索
+            //var_dump($content_raw);
+            $command = 'curl --header "Ocp-Apim-Subscription-Key: ' . MSSEARCH_KEY . '"'
+                     . ' -Ss "https://api.cognitive.microsoft.com/bing/v5.0/images/search?q='
+                     . urlencode($content_raw) . '&mkt=ja-JP"';
+            exec($command, $outimage, $retimage);
+            //var_dump($outimage);
 
-        $resultsall = json_decode($outimage[0], true);
-        //var_dump($resultsall);
-        $results = $resultsall['value'];
-        //var_dump($results);
-        // ランダムにシャッフル
-        $indexes = array_rand($results, count($results));
-        shuffle($indexes);
-        foreach ($indexes as $index) {
-            $picked = $results[$index];
-            $encodingformat = $picked['encodingFormat'];
-            $thumbnailurl = $picked['thumbnailUrl'];
-            if ($encodingformat === 'jpeg' || $encodingformat === 'jpg' ||
-                $encodingformat === 'png' || $encodingformat === 'gif') {
-                $tmppath = __DIR__ . '/images/' . date('YmdHis') . '_' . gen_randstr(8) . '.' . $encodingformat;
-                $imgdata = file_get_contents($thumbnailurl);
-                if ($imgdata) {
-                    file_put_contents($tmppath, $imgdata);
-                    $mediares = post_media($tmppath);
-                    $ret['status'] = '@' . $username;
-                    $ret['media_ids[]'] = $mediares['id'];
-                    return $ret;
+            $resultsall = json_decode($outimage[0], true);
+            //var_dump($resultsall);
+            $results = $resultsall['value'];
+            //var_dump($results);
+            if (1 <= count($results)) {
+                // ランダムにシャッフル
+                $indexes = array_rand($results, count($results));
+                shuffle($indexes);
+                foreach ($indexes as $index) {
+                    $picked = $results[$index];
+                    $encodingformat = $picked['encodingFormat'];
+                    $thumbnailurl = $picked['thumbnailUrl'];
+                    if ($encodingformat === 'jpeg' || $encodingformat === 'jpg' ||
+                        $encodingformat === 'png' || $encodingformat === 'gif') {
+                        $tmppath = __DIR__ . '/images/' . date('YmdHis') . '_'
+                                 . gen_randstr(8) . '.' . $encodingformat;
+                        $imgdata = file_get_contents($thumbnailurl);
+                        if ($imgdata) {
+                            file_put_contents($tmppath, $imgdata);
+                            $mediares = post_media($tmppath);
+                            $ret['status'] = '@' . $username;
+                            $ret['media_ids[]'] = $mediares['id'];
+                            return $ret;
+                        }
+                    }
                 }
             }
         }
@@ -537,6 +546,14 @@ function post_media($imagepath) {
     //print $ret . "\n";
 
     return json_decode($out[0], true);
+}
+
+// 形態素の数を返す
+function get_ma_count($sentence) {
+    $xmlstr = file_get_contents('https://jlp.yahooapis.jp/MAService/V1/parse?'
+            . 'appid=' . YAHOODEV_APPID . '&results=ma&sentence=' . urlencode($sentence));
+    $xmlobj = new SimpleXMLElement($xmlstr);
+    return (int)($xmlobj->ma_result->total_count);
 }
 
 // ランダム文字列 (数字のみ) を生成
