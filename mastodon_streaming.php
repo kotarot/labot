@@ -50,27 +50,14 @@ function proc($update) {
     // 返信処理
     ////////////////
 
-    // マルチバイト文字が含まれていないときのみ
-    // 英語から日本語翻訳
-    if (mb_strlen($content_raw) == mb_strwidth($content_raw)) {
-        // URLは翻訳しない (雑判定)
-        if (mb_substr($content_raw, 0, 4) !== 'http') {
-            $translated = translate($content_raw);
-            if ($translated) {
-                $ret['status'] = '@' . $username . ' :flag_gb:→:flag_jp: ' . $translated;
-                return $ret;
-            }
-        }
-    }
-
     // 固定キーワードと返答の定義
     $static_reactions = array(
         // あいさつ的な
-        array(
-            'keywords'  => array('hello', 'hi', 'hey'),
-            'reactions' => array('hello', 'hi', 'hey'),
-            'cond'      => $is_mention_me
-        ),
+        //array(
+        //    'keywords'  => array('hello', 'hi', 'hey'),
+        //    'reactions' => array('hello', 'hi', 'hey'),
+        //    'cond'      => $is_mention_me
+        //),
         // 有能、かわいい
         array(
             'keywords'  => array('有能', '可愛い', 'かわいい'),
@@ -245,6 +232,32 @@ function proc($update) {
         }
     }
 
+    // Computation
+    $command = 'curl --header "Ocp-Apim-Subscription-Key: ' . MSSEARCH_KEY . '"'
+             . ' -Ss "https://api.cognitive.microsoft.com/bing/v5.0/search?q='
+             . urlencode($content_raw) . '&mkt=ja-JP"';
+    exec($command, $out, $retcode);
+    //var_dump($out);
+    $searchres = json_decode($out[0], true);
+    //var_dump($searchres);
+    if (array_key_exists('computation', $searchres)) {
+        $ret['status'] = '@' . $username . ' ' . $searchres['computation']['value'];
+        return $ret;
+    }
+
+    // マルチバイト文字が含まれていないときのみ
+    // 英語から日本語翻訳
+    if (mb_strlen($content_raw) == mb_strwidth($content_raw)) {
+        // URLは翻訳しない (雑判定)
+        if (mb_substr($content_raw, 0, 4) !== 'http') {
+            $translated = translate($content_raw);
+            if ($translated) {
+                $ret['status'] = '@' . $username . ' :flag_gb:→:flag_jp: ' . $translated;
+                return $ret;
+            }
+        }
+    }
+
     // 画像返信
     if (strpos($content_raw, '@') === false &&
         strpos($content_raw, ' ') === false && strpos($content_raw, '　') === false) {
@@ -269,11 +282,11 @@ function proc($update) {
         $command = 'curl --header "Ocp-Apim-Subscription-Key: ' . MSSEARCH_KEY . '"'
                  . ' -Ss "https://api.cognitive.microsoft.com/bing/v5.0/images/search?q='
                  . urlencode($content_raw) . '&mkt=ja-JP"';
-        exec($command, $out, $retcode);
-        //var_dump($out);
-        //print $retcode . "\n";
+        exec($command, $outimage, $retcode);
+        //var_dump($outimage);
 
-        $resultsall = json_decode($out[0], true);
+        $resultsall = json_decode($outimage[0], true);
+        //var_dump($resultsall);
         $results = $resultsall['value'];
         //var_dump($results);
         // ランダムにシャッフル
