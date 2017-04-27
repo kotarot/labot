@@ -17,3 +17,6 @@ mastodonsocial_post.config.php
 last_yamanote.txt
 last_fukutoshin.txt
 last_rainfall.txt
+
+images/*
+!.gitkeep
