@@ -9,7 +9,7 @@ slack_post.config.php
 hackey.config.php
 linebot.config.php
 yahoodev.config.php
-mstranslator.config.php
+msazure.config.php
 
 # Mastodon
 mastodon.config.php

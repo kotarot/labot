@@ -1,7 +1,7 @@
 <?php
 require_once(__DIR__ . '/mastodon.config.php');
 require_once(__DIR__ . '/mastodon_googleapi.php');
-require_once(__DIR__ . '/mstranslator.config.php');
+require_once(__DIR__ . '/msazure.config.php');
 
 if (php_sapi_name() != 'cli') {
   throw new Exception('This application must be run on the command line.');
@@ -187,21 +187,6 @@ function proc($update) {
         }
     }
 
-    // レナ
-    $lenas = array('レナ', 'れな', '玲奈');
-    foreach ($lenas as $lena) {
-        if (strpos($content_raw, $lena) !== false) {
-            $imagepath = __DIR__ . '/images/lena.png';
-            if (strpos($content_raw, '全身') !== false) {
-                $imagepath = __DIR__ . '/images/lena_hires.jpg';
-            }
-            $mediares = post_media($imagepath);
-            $ret['status'] = '@' . $username;
-            $ret['media_ids[]'] = $mediares['id'];
-            return $ret;
-        }
-    }
-
     // ランニング
     $runnings = array('走った', 'はしった');
     foreach ($runnings as $running) {
@@ -256,6 +241,59 @@ function proc($update) {
                     . '今月の研究室内消費カロリーランキングは'
                     . $rank['this_rank'] . '位だよ！';
                 return $ret;
+            }
+        }
+    }
+
+    // 画像返信
+    if (strpos($content_raw, '@') === false &&
+        strpos($content_raw, ' ') === false && strpos($content_raw, '　') === false) {
+
+        // レナ
+        $lenas = array('レナ', 'れな', '玲奈');
+        foreach ($lenas as $lena) {
+            if (strpos($content_raw, $lena) !== false) {
+                $imagepath = __DIR__ . '/images/lena.png';
+                if (strpos($content_raw, '全身') !== false) {
+                    $imagepath = __DIR__ . '/images/lena_hires.jpg';
+                }
+                $mediares = post_media($imagepath);
+                $ret['status'] = '@' . $username;
+                $ret['media_ids[]'] = $mediares['id'];
+                return $ret;
+            }
+        }
+
+        // 画像検索
+        var_dump($content_raw);
+        $command = 'curl --header "Ocp-Apim-Subscription-Key: ' . MSSEARCH_KEY . '"'
+                 . ' -Ss "https://api.cognitive.microsoft.com/bing/v5.0/images/search?q='
+                 . urlencode($content_raw) . '&mkt=ja-JP"';
+        exec($command, $out, $retcode);
+        //var_dump($out);
+        //print $retcode . "\n";
+
+        $resultsall = json_decode($out[0], true);
+        $results = $resultsall['value'];
+        //var_dump($results);
+        // ランダムにシャッフル
+        $indexes = array_rand($results, count($results));
+        shuffle($indexes);
+        foreach ($indexes as $index) {
+            $picked = $results[$index];
+            $encodingformat = $picked['encodingFormat'];
+            $thumbnailurl = $picked['thumbnailUrl'];
+            if ($encodingformat === 'jpeg' || $encodingformat === 'jpg' ||
+                $encodingformat === 'png' || $encodingformat === 'gif') {
+                $tmppath = __DIR__ . '/images/' . date('YmdHis') . '_' . gen_randstr(8) . '.' . $encodingformat;
+                $imgdata = file_get_contents($thumbnailurl);
+                if ($imgdata) {
+                    file_put_contents($tmppath, $imgdata);
+                    $mediares = post_media($tmppath);
+                    $ret['status'] = '@' . $username;
+                    $ret['media_ids[]'] = $mediares['id'];
+                    return $ret;
+                }
             }
         }
     }
@@ -484,4 +522,14 @@ function post_media($imagepath) {
     //print $ret . "\n";
 
     return json_decode($out[0], true);
+}
+
+// ランダム文字列 (数字のみ) を生成
+function gen_randstr($len) {
+    $chars = '0123456789';
+    $ret = '';
+    for ($i = 0; $i < $len; $i++) {
+        $ret .= $chars[mt_rand(0, 9)];
+    }
+    return $ret;
 }

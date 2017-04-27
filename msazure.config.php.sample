@@ -1,0 +1,10 @@
+<?php
+/**
+ * Fill API keys and rename this file to `msazure.config.php`
+ */
+
+// Microsoft Translator API 用
+define('MSTRANSLATOR_KEY', 'XXXXXXXX');
+
+// Microsoft Search API 用
+define('MSSEARCH_KEY', 'XXXXXXXX');
