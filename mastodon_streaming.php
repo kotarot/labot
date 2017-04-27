@@ -132,6 +132,17 @@ function proc($update) {
             'keywords'  => array('にゃーん', 'にゃん'),
             'reactions' => array('にゃーん！'),
             'cond'      => true
+        ),
+        // らぼいん、らぼりだ
+        array(
+            'keywords'  => array('らぼいん', 'ラボイン'),
+            'reactions' => array('やぁ'),
+            'cond'      => true
+        ),
+        array(
+            'keywords'  => array('らぼりだ', 'ラボリダ', 'らぼあうと', 'ラボアウト'),
+            'reactions' => array('ばいばい'),
+            'cond'      => true
         )
     );
     foreach ($static_reactions as $static_reaction) {
@@ -194,14 +205,34 @@ function proc($update) {
     foreach ($studyings as $studying) {
         if (strpos($content_lower, $studying) !== false) {
             if (preg_match('/-?[0-9]+(\.[0-9]*)?時間/u', $content_lower, $matches)) {
-                $distance = (float)mb_substr($matches[0], 0, -2);
-                //var_dump($distance);
-                $rank = calc_ranking('studying', $username, $distance);
+                $hours = (float)mb_substr($matches[0], 0, -2);
+                //var_dump($hours);
+                $rank = calc_ranking('studying', $username, $hours);
 
                 $ret['status'] = '@' . $username . ' すっごーーーい！君は今月'
                     . round($rank['this_dist'], 2) . '時間、'
                     . 'これまで合計' . round($rank['total_dist'], 2) . '時間研究したよ！'
                     . '今月の研究室内研究時間ランキングは'
+                    . $rank['this_rank'] . '位だよ！';
+                return $ret;
+            }
+        }
+    }
+
+    // 運動
+    $exercisings = array('運動した', 'うんどうした');
+    foreach ($exercisings as $exercising) {
+        if (strpos($content_lower, $exercising) !== false) {
+            if (preg_match('/-?[0-9]+(\.[0-9]*)?時間/u', $content_lower, $matches)) {
+                $hours = (float)mb_substr($matches[0], 0, -2);
+                //var_dump($hours);
+                $rank = calc_ranking('exercising', $username, $hours);
+
+                $ret['status'] = '@' . $username . ' すっごーーーい！君は今月'
+                    . round($rank['this_dist'], 2) . '時間運動して'
+                    . round(400.0 * $rank['this_dist'], 2) . 'kcal消費して、'
+                    . 'これまで合計' . round(400.0 * $rank['total_dist'], 2) . 'kcal消費したよ！'
+                    . '今月の研究室内消費カロリーランキングは'
                     . $rank['this_rank'] . '位だよ！';
                 return $ret;
             }
