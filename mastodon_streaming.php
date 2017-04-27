@@ -143,6 +143,12 @@ function proc($update) {
             'keywords'  => array('らぼりだ', 'ラボリダ', 'らぼあうと', 'ラボアウト'),
             'reactions' => array('ばいばい'),
             'cond'      => true
+        ),
+        // 眠い
+        array (
+            'keywords'  => array('眠い', 'ねむい'),
+            'reactions' => array('寝たら死ぬぞ'),
+            'cond'      => true
         )
     );
     foreach ($static_reactions as $static_reaction) {
