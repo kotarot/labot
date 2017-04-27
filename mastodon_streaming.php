@@ -260,7 +260,9 @@ function proc($update) {
 
     // 画像返信
     if (strpos($content_raw, '@') === false &&
-        strpos($content_raw, ' ') === false && strpos($content_raw, '　') === false) {
+        strpos($content_raw, ' ') === false && strpos($content_raw, '　') === false &&
+        strpos($content_raw, '.') === false &&
+        strpos($content_raw, '．') === false && strpos($content_raw, '。') === false) {
 
         // レナ
         $lenas = array('レナ', 'れな', '玲奈');
