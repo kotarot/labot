@@ -187,6 +187,21 @@ function proc($update) {
         }
     }
 
+    // レナ
+    $lenas = array('レナ', 'れな', '玲奈');
+    foreach ($lenas as $lena) {
+        if (strpos($content_raw, $lena) !== false) {
+            $imagepath = __DIR__ . '/images/lena.png';
+            if (strpos($content_raw, '全身') !== false) {
+                $imagepath = __DIR__ . '/images/lena_hires.jpg';
+            }
+            $mediares = post_media($imagepath);
+            $ret['status'] = '@' . $username;
+            $ret['media_ids[]'] = $mediares['id'];
+            return $ret;
+        }
+    }
+
     // ランニング
     $runnings = array('走った', 'はしった');
     foreach ($runnings as $running) {
@@ -429,18 +444,7 @@ try {
                 $proced = proc($decoded);
                 var_dump($proced);
                 if (!is_null($proced)) {
-                    $post_data = 'access_token=' . MASTODON_ACCESS_TOKEN;
-                    if (500 <= mb_strlen($proced['status'])) {
-                        $proced['status'] = mb_substr($proced['status'], 0, 500);
-                    }
-                    foreach ($proced as $k => $v) {
-                        $post_data .= '&' . $k . '=' . urlencode($v);
-                    }
-                    $command = 'curl -X POST -d "' . $post_data
-                             . '" -Ss https://' . MASTODON_HOST . '/api/v1/statuses';
-                    exec($command, $out, $ret);
-                    var_dump($out);
-                    print $ret . "\n";
+                    post_status($proced);
                 }
             }
         }
@@ -451,4 +455,33 @@ try {
 } catch (PDOException $e) {
     print($e->getMessage());
     die();
+}
+
+// トゥート (D進!) を投稿
+function post_status($postdata) {
+    if (500 <= mb_strlen($postdata['status'])) {
+        $postdata['status'] = mb_substr($postdata['status'], 0, 500);
+    }
+
+    $postdatastr = 'access_token=' . MASTODON_ACCESS_TOKEN;
+    foreach ($postdata as $k => $v) {
+        $postdatastr .= '&' . $k . '=' . urlencode($v);
+    }
+    $command = 'curl -X POST -d "' . $postdatastr
+             . '" -Ss https://' . MASTODON_HOST . '/api/v1/statuses';
+    exec($command, $out, $ret);
+    var_dump($out);
+    print $ret . "\n";
+}
+
+// 画像をアップロード
+function post_media($imagepath) {
+    $command = 'curl -X POST -F "access_token=' . MASTODON_ACCESS_TOKEN . '"'
+             . ' -F "file=@' . $imagepath . '"'
+             . ' -Ss https://' . MASTODON_HOST . '/api/v1/media';
+    exec($command, $out, $ret);
+    //var_dump($out);
+    //print $ret . "\n";
+
+    return json_decode($out[0], true);
 }
