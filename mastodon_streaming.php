@@ -28,7 +28,12 @@ function proc($update) {
     $content_raw   = strip_tags(str_replace('<br>', ' ', str_replace('<br />', ' ', $content)));
     $username      = $update['data']['account']['username'];
 
+    // 自分には反応しない
     if ($username === MASTODON_USERNAME) {
+        return NULL;
+    }
+    // MathJax の翻訳避け用
+    if (2 <= mb_substr_count($content_raw, '$')) {
         return NULL;
     }
 
