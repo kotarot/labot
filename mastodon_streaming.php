@@ -241,6 +241,16 @@ function proc($update) {
         }
     }
 
+    // vs
+    $vss = array('v.s.', 'V.S.', 'vs.', 'VS.', 'vs', 'VS', 'or', 'OR', 'または');
+    foreach ($vss as $vs) {
+        if (strpos($content_raw, $vs) !== false) {
+            $cands = explode($vs, $content_raw);
+            $ret['status'] = '@' . $username . ' ' . $cands[array_rand($cands)];
+            return $ret;
+        }
+    }
+
     // Computation
     $command = 'curl --header "Ocp-Apim-Subscription-Key: ' . MSSEARCH_KEY . '"'
              . ' -Ss "https://api.cognitive.microsoft.com/bing/v5.0/search?q='
