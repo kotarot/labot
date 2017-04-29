@@ -250,11 +250,11 @@ function proc($update) {
     }
 
     // vs
-    $vss = array('v.s.', 'V.S.', 'vs.', 'VS.', 'vs', 'VS', 'or', 'OR', 'または');
+    $vss = array(' v.s. ', ' V.S. ', ' vs. ', ' VS. ', ' vs ', ' VS ', ' or ', ' OR ', 'または');
     foreach ($vss as $vs) {
         if (strpos($content_raw, $vs) !== false) {
             $cands = explode($vs, $content_raw);
-            $ret['status'] = '@' . $username . ' ' . $cands[array_rand($cands)];
+            $ret['status'] = '@' . $username . ' ' . trim($cands[array_rand($cands)]);
             return $ret;
         }
     }
