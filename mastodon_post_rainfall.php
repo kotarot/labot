@@ -36,7 +36,7 @@ $posttext = '';
 if ($current_rainfall <= 0.0 && 0.0 < $forecast_rainfall
     && 179*60 <= $current_unixtime - $last_unixtime) {
 
-    $posttext = 'これから雨が降るみたい (1時間後の降水確率 ' . $forecast_rainfall . '%) '
+    $posttext = 'これから雨が降るみたい (1時間後の降水 ' . $forecast_rainfall . ' mm/h) '
               . ':umbrella: :umbrella: :umbrella: :candy: :umbrella: '
               . '気をつけて！';
     file_put_contents(__DIR__ . '/last_rainfall.txt', $current_unixtime . "\n");
