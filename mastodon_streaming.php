@@ -51,6 +51,14 @@ function proc($update) {
     // 返信処理
     ////////////////
 
+    // Amareq で空投稿するときのコンテンツ文字列
+    $mastodon_host_w_escape = str_replace('.', '\.', MASTODON_HOST);
+    $content_raw_wo_media =
+        preg_replace('/https:\/\/' . $mastodon_host_w_escape . '\/media\/[a-zA-Z0-9_]+/', '', $content_raw);
+    if (bin2hex(trim($content_raw_wo_media)) === 'e2808b') {
+        return NULL;
+    }
+
     // 固定キーワードと返答の定義
     $static_reactions = array(
         // あいさつ的な
