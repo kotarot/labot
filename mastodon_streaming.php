@@ -192,8 +192,9 @@ function proc($update) {
                 //var_dump($distance);
                 $rank = calc_ranking('running', $username, $distance);
 
-                $ret['status'] = '@' . $username . ' すっごーーーい！君は今月'
-                    . round($rank['this_dist'], 2) . 'km、'
+                $ret['status'] = '@' . $username . ' すっごーーーい！'
+                    . round($distance, 2) . 'km走ったんだね！'
+                    . '君は今月' . round($rank['this_dist'], 2) . 'km、'
                     . 'これまで合計' . round($rank['total_dist'], 2) . 'km走ったよ！'
                     . '今月の研究室内ランニング距離ランキングは'
                     . $rank['this_rank'] . '位だよ！';
@@ -211,8 +212,9 @@ function proc($update) {
                 //var_dump($hours);
                 $rank = calc_ranking('studying', $username, $hours);
 
-                $ret['status'] = '@' . $username . ' すっごーーーい！君は今月'
-                    . round($rank['this_dist'], 2) . '時間、'
+                $ret['status'] = '@' . $username . ' すっごーーーい！'
+                    . round($hours, 2) . '時間研究したんだね！'
+                    . '君は今月' . round($rank['this_dist'], 2) . '時間、'
                     . 'これまで合計' . round($rank['total_dist'], 2) . '時間研究したよ！'
                     . '今月の研究室内研究時間ランキングは'
                     . $rank['this_rank'] . '位だよ！';
@@ -230,8 +232,9 @@ function proc($update) {
                 //var_dump($hours);
                 $rank = calc_ranking('exercising', $username, $hours);
 
-                $ret['status'] = '@' . $username . ' すっごーーーい！君は今月'
-                    . round($rank['this_dist'], 2) . '時間運動して'
+                $ret['status'] = '@' . $username . ' すっごーーーい！'
+                    . round($hours, 2) . '時間運動したんだね！'
+                    . '君は今月' . round($rank['this_dist'], 2) . '時間運動して'
                     . round(400.0 * $rank['this_dist'], 2) . 'kcal消費して、'
                     . 'これまで合計' . round(400.0 * $rank['total_dist'], 2) . 'kcal消費したよ！'
                     . '今月の研究室内消費カロリーランキングは'
