@@ -1,6 +1,7 @@
 <?php
 require_once(__DIR__ . '/mastodon.config.php');
 require_once(__DIR__ . '/mastodon_googleapi.php');
+require_once(__DIR__ . '/mastodon_yahooweather.php');
 require_once(__DIR__ . '/msazure.config.php');
 require_once(__DIR__ . '/yahoodev.config.php');
 
@@ -153,7 +154,7 @@ function proc($update) {
         )
     );
     foreach ($static_reactions as $static_reaction) {
-        $reply = contains_and_reply($content_lower,
+        $reply = contains_and_reply($content_raw,
             $static_reaction['keywords'], $static_reaction['reactions'], $static_reaction['cond']);
         if ($reply) {
             $ret['status'] = '@' . $username . ' ' . $reply;
@@ -161,12 +162,24 @@ function proc($update) {
         }
     }
 
+    // 天気
+    $tenkis = array('天気', 'てんき');
+    foreach ($tenkis as $tenki) {
+        if (strpos($content_raw, $tenki) !== false) {
+            $weathertext = get_yahooweather();
+            if ($weathertext !== '') {
+                $ret['status'] = '@' . $username . ' ' . $weathertext;
+                return $ret;
+            }
+        }
+    }
+
     // 平成何年
     $heiseis = array('平成何年');
     foreach ($heiseis as $heisei) {
-        if (strpos($content_lower, $heisei) !== false) {
+        if (strpos($content_raw, $heisei) !== false) {
             $hyear = -1;
-            if (preg_match('/[0-9]+/', $content_lower, $matches)) {
+            if (preg_match('/[0-9]+/', $content_raw, $matches)) {
                 $hyear = (int)$matches[0] - 1988;
             } else {
                 $hyear = (int)date('Y') - 1988;
@@ -181,7 +194,7 @@ function proc($update) {
     //var_dump($upcoming_teizemi);
     $teizemis = array('定期ゼミ', '定ゼミ', 'ゼミ');
     foreach ($teizemis as $teizemi) {
-        if (strpos($content_lower, $teizemi) !== false && strpos($content_lower, 'いつ') !== false) {
+        if (strpos($content_raw, $teizemi) !== false && strpos($content_raw, 'いつ') !== false) {
             $ret['status'] = '@' . $username . ' 次の定ゼミは ' . $upcoming_teizemi[0]['date'] . ' だよ';
             $ret['visibility'] = 'private';
             return $ret;
