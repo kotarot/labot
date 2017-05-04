@@ -22,5 +22,6 @@
 */1  * * * * php /path/to/labot/mastodon_post_train.php
 */10 * * * * php /path/to/labot/mastodon_post_rainfall.php
 
-*/1 * * * * /path/to/labot/mastodon_streaming.sh
+*/2 * * * * /path/to/labot/mastodon_streaming.sh
+1   3 * * * /path/to/labot/mastodon_streaming_kill.sh
 ```
