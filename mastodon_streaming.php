@@ -137,7 +137,7 @@ function proc($update) {
         ),
         // らぼいん、らぼりだ
         array(
-            'keywords'  => array('らぼいん', 'ラボイン'),
+            'keywords'  => array('らぼいん', 'ラボイン', 'らぼなう', '研究室なう'),
             'reactions' => array('やぁ'),
             'cond'      => true
         ),
