@@ -13,3 +13,6 @@ define('MASTODON_MYSQL_USER',     'XXXXXXXX');
 define('MASTODON_MYSQL_PASSWORD', 'XXXXXXXX');
 define('MASTODON_MYSQL_DATABASE', 'XXXXXXXX');
 define('MASTODON_MYSQL_HOST',     'XXXXXXXX');
+
+// chample 用
+define('CHAMPLE_HOME', '/path/to/chample');
