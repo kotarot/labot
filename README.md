@@ -16,6 +16,7 @@
 0 14 * * *  php /path/to/labot/mastodon_post_hitokoto.php nap
 0 15 * * *  php /path/to/labot/mastodon_post_hitokoto.php oyatsu
 0 17 * * *  php /path/to/labot/mastodon_post_hitokoto.php beer
+0 18 * * *  php /path/to/labot/mastodon_post_scramble.php
 0 21 * * *  php /path/to/labot/mastodon_post_zemi.php tomorrow
 0 0 * * *   php /path/to/labot/mastodon_post_hitokoto.php gotobed
 

@@ -2,6 +2,7 @@
 require_once(__DIR__ . '/mastodon.config.php');
 require_once(__DIR__ . '/mastodon_googleapi.php');
 require_once(__DIR__ . '/mastodon_yahooweather.php');
+require_once(__DIR__ . '/mastodon_cubing.php');
 require_once(__DIR__ . '/msazure.config.php');
 require_once(__DIR__ . '/yahoodev.config.php');
 
@@ -13,6 +14,7 @@ if (php_sapi_name() != 'cli') {
 // タイムラインのアップデートを受け取って
 // 反応する処理を定義する
 function proc($update) {
+    global $pdo;
 
     if (!array_key_exists('data', $update)) {
         return NULL;
@@ -28,6 +30,7 @@ function proc($update) {
     $content_lower = strtolower($content);
     $content_raw   = strip_tags(str_replace('<br>', ' ', str_replace('<br />', ' ', $content)));
     $username      = $update['data']['account']['username'];
+    $in_reply_to_id = $update['data']['in_reply_to_id'];
 
     // 自分には反応しない
     if ($username === MASTODON_USERNAME) {
@@ -63,6 +66,26 @@ function proc($update) {
         preg_replace('/https:\/\/' . $mastodon_host_w_escape . '\/media\/[a-zA-Z0-9_]+/', '', $content_raw);
     if (bin2hex(trim($content_raw_wo_media)) === 'e2808b') {
         return NULL;
+    }
+
+    // スクランブルへの返信
+    if (is_scramble_status_id($pdo, $in_reply_to_id)) {
+        if (preg_match('/[0-9]+(\.[0-9]*)?/', $content_raw, $matches)) {
+            $score = (float)($matches[0]);
+            var_dump($score);
+            $rank = calc_cubing_ranking($pdo, $username, $in_reply_to_id, $score);
+
+            $ret['status'] = '@' . $username . ' すっごーーーい！君の記録は'
+                . floor_cubing($score) . '秒だね！このスクランブルでの研究室内ランキングは'
+                . $rank['this_rank'] . '位だよ！'
+                . '君のこれまでの最速記録は'
+                . floor_cubing($rank['total_score']) . '秒でランキングは'
+                . $rank['total_rank'] . '位だよ！';
+            return $ret;
+        } else {
+            $ret['status'] = '@' . $username . ' xx.xx のフォーマットで返信してね';
+            return $ret;
+        }
     }
 
     // 固定キーワードと返答の定義
@@ -603,4 +626,15 @@ function gen_randstr($len) {
         $ret .= $chars[mt_rand(0, 9)];
     }
     return $ret;
+}
+
+// 小数を xx.xx で返す
+function floor_cubing($val) {
+    $valstr = (string)$val;
+    if (strpos($valstr, '.') !== false) {
+        $exploded = explode('.', $valstr);
+        return (float)($exploded[0] . '.' . substr($exploded[1], 0, 2));
+    } else {
+        return $val;
+    }
 }
