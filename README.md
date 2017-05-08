@@ -25,4 +25,7 @@
 
 */2 * * * * /path/to/labot/mastodon_streaming.sh
 1   3 * * * /path/to/labot/mastodon_streaming_kill.sh
+
+*/2 * * * * /path/to/labot/RasPi_lightning/lightning_mastodon.sh
+1   6 * * * /path/to/labot/RasPi_lightning/lightning_mastodon_kill.sh
 ```
