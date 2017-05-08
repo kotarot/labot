@@ -19,4 +19,9 @@ last_fukutoshin.txt
 last_rainfall.txt
 
 images/*
+
+# lightning
+*.pyc
+RasPi_lightning/lightning/*
+
 !.gitkeep
