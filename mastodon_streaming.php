@@ -158,17 +158,6 @@ function proc($update) {
             'reactions' => array('にゃーん！'),
             'cond'      => true
         ),
-        // らぼいん、らぼりだ
-        array(
-            'keywords'  => array('らぼいん', 'ラボイン', 'らぼなう', '研究室なう'),
-            'reactions' => array('やぁ'),
-            'cond'      => true
-        ),
-        array(
-            'keywords'  => array('らぼりだ', 'ラボリダ', 'らぼあうと', 'ラボアウト'),
-            'reactions' => array('ばいばい'),
-            'cond'      => true
-        ),
         // 眠い
         array (
             'keywords'  => array('眠い', 'ねむい'),
@@ -221,6 +210,36 @@ function proc($update) {
             $ret['status'] = '@' . $username . ' 次の定ゼミは ' . $upcoming_teizemi[0]['date'] . ' だよ';
             $ret['visibility'] = 'private';
             return $ret;
+        }
+    }
+
+    // ラボイン、ラボアウト
+    // らぼいん、らぼりだ
+    $labins = array('らぼいん', 'ラボイン', 'らぼなう', '研究室なう');
+    foreach ($labins as $labin) {
+        if (strpos($content_lower, $labin) !== false) {
+            insert_labin($username);
+            $ret['status'] = '@' . $username . ' やぁ';
+            return $ret;
+        }
+    }
+    $labouts = array('らぼりだ', 'ラボリダ', 'らぼあうと', 'ラボアウト');
+    foreach ($labouts as $labout) {
+        if (strpos($content_lower, $labout) !== false) {
+            $last_labin = get_last_labin($username);
+            var_dump('!!!!');
+            var_dump($last_labin);
+            if ($last_labin) {
+                // 無理やり $content_lower に「研究した」にして研究時間を記録する
+                $last_time = strtotime($last_labin); // 「ラボイン」のタイムスタンプ
+                $now_time = time();                  // 現在のタイムスタンプ
+                $during_time = ($now_time - $last_time) / (60.0 * 60.0); // 秒から時間へ
+                $content_lower = $during_time . '時間研究した';
+                break;
+            } else {
+                $ret['status'] = '@' . $username . ' ばいばい';
+                return $ret;
+            }
         }
     }
 
@@ -414,6 +433,28 @@ function contains_and_reply($content, $keywords, $reactions, $cond = false) {
     return NULL;
 }
 
+// 「ラボイン」記録
+function insert_labin($username) {
+    global $pdo;
+
+    $stmt = $pdo->prepare('INSERT INTO labin (username) VALUES (:username)');
+    $stmt->bindParam(':username', $username, PDO::PARAM_STR);
+    $stmt->execute();
+}
+// 最後の「ラボイン」を取得
+function get_last_labin($username) {
+    global $pdo;
+
+    $stmt = $pdo->query(
+        "SELECT id, username, created_at FROM labin WHERE username = '" . $username . "' ORDER BY id DESC"
+    );
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        return $row['created_at'];
+    }
+    return false;
+}
+
+// ランキング計算
 function calc_ranking($tablename, $username, $distance) {
     global $pdo;
 
