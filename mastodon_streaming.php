@@ -563,7 +563,7 @@ try {
 
     $fp = fsockopen('ssl://' . MASTODON_HOST, 443, $errno, $errstr, 5);
     $req = [
-        'GET /api/v1/streaming/user HTTP/1.1',
+        'GET /api/v1/streaming/public/local HTTP/1.1',
         'Host: ' . MASTODON_HOST,
         'User-Agent: Labot',
         'Authorization: Bearer ' . MASTODON_ACCESS_TOKEN
