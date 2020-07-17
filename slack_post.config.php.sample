@@ -3,9 +3,19 @@
  * Fill API keys and rename this file to `slack_post.config.php`
  */
 
-// Bot 情報
-define('BOT_NAME', 'Labot');
-define('BOT_ICON', ':speak_no_evil:');
+define('WEBHOOK_URL', 'https://hooks.slack.com/services/XXX/XXX/XXX');
 
-// Slack 用
-define('SLACK_API_KEY', 'XXXXXXXX');
+function post_slack($text) {
+    $message = array(
+        'text' => $text,
+    );
+    $options = array(
+        'http' => array(
+            'method' => 'POST',
+            'header' => 'Content-Type: application/json',
+            'content' => json_encode($message),
+        )
+    );
+    $response = file_get_contents(WEBHOOK_URL, false, stream_context_create($options));
+    print $response . "\n";
+}

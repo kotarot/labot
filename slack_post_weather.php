@@ -19,9 +19,4 @@ $text = '[' . $todaystr .'] *今日の天気:* '
       . '午後 ' . $postdata['weather'][1]['main'] . ' ' . $postdata['weather'][1]['icon'] . ' → '
       . '夜 '   . $postdata['weather'][2]['main'] . ' ' . $postdata['weather'][2]['icon'] . ' '
       . '(最高気温 ' . $postdata['temperature']['max'] . '°C / 最低気温 ' . $postdata['temperature']['min'] . '°C)';
-$text = urlencode($text);
-
-$url = "https://slack.com/api/chat.postMessage?token=" . SLACK_API_KEY
-     . "&channel=%23general&username=" . BOT_NAME . "&icon_emoji=" . BOT_ICON . "&text=${text}";
-$response = file_get_contents($url);
-print $response . "\n";
+post_slack($text);

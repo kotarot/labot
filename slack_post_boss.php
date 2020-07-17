@@ -111,9 +111,4 @@ if (count($results->getItems()) == 0) {
 // Slack投稿処理
 
 $text = '[' . $todaystr . '] *先生の予定:* ' . implode(' / ', $boss_events);
-$text = urlencode($text);
-
-$url = "https://slack.com/api/chat.postMessage?token=" . SLACK_API_KEY
-     . "&channel=%23general&username=" . BOT_NAME . "&icon_emoji=" . BOT_ICON . "&text=${text}";
-$response = file_get_contents($url);
-print $response . "\n";
+post_slack($text);
